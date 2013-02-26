@@ -93,3 +93,6 @@
 	url = git://github.com/majutsushi/tagbar.git
     update = merge
     ignore = untracked
+[submodule "bundle/rst"]
+	path = bundle/rst
+	url = git://github.com/khorser/vim-rst-ftplugin.git
