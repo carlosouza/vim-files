@@ -1,28 +1,24 @@
 set nocompatible
 
-execute pathogen#infect()
 
 " In many terminal emulators the mouse works just fine, thus enable it.
 if has('mouse')
   set mouse=a
 endif
 
+execute pathogen#infect()
 
 " Theme {{{
 
-set hlsearch
-
-
 if &t_Co > 2
-  syntax on
   colorscheme default
   set background=dark
   set paste
 elseif has("gui_running")
   colorscheme solarized
-  " let g:solarized_visibility="high"
   set background=light
   set guifont=Monaco
+  set guioptions+=cegmRL
 endif
 
 nnoremap ,bgl :set background=light<CR>
@@ -32,8 +28,9 @@ nnoremap ,bgd :set background=dark<CR>
 
 " Settings {{{
 
-"set omnifunc=syntaxcomplete#Complete
+set omnifunc=syntaxcomplete#Complete
 
+syntax on
 set hlsearch
 set nospell
 set hidden
@@ -52,6 +49,8 @@ set softtabstop=4
 set pastetoggle=<F12>
 set ignorecase
 set smartcase
+
+set sessionoptions=buffers,sesdir,folds,localoptions,tabpages,winpos,winsize
 
 set omnifunc=syntaxcomplete#Complete
 " }}}
@@ -79,7 +78,8 @@ set statusline+=\ %P    "percent through file
 let mapleader=","
 
 " edit vimrc in vsplit
-nnoremap <leader>v :vsplit $MYVIMRC<cr>
+nnoremap <leader>ve :vsplit $MYVIMRC<cr>
+nnoremap <leader>vs :source $MYVIMRC<cr>
 
 " quickfix and location-list mappings
 nnoremap ,qo :copen<CR>
@@ -88,10 +88,13 @@ nnoremap ,lo :lopen<CR>
 nnoremap ,lc :lclose<CR>
 
 " move easily between windows
-nnoremap <silent> <s-h> :wincmd h<CR>
-nnoremap <silent> <s-l> :wincmd l<CR>
-nnoremap <silent> <s-j> :wincmd j<CR>
-nnoremap <silent> <s-k> :wincmd k<CR>
+nnoremap <silent> <M-h> :wincmd h<CR>
+nnoremap <silent> <M-l> :wincmd l<CR>
+nnoremap <silent> <M-j> :wincmd j<CR>
+nnoremap <silent> <M-k> :wincmd k<CR>
+
+nnoremap <D-]> :tabnext<CR>
+nnoremap <D-[> :tabprevious<CR>
 
 " }}}
 
@@ -107,8 +110,27 @@ if has("autocmd")
 		autocmd FileType vim setlocal foldmethod=marker
 		autocmd BufWritePost .vimrc source $MYVIMRC
 	augroup end
+    augroup markdown
+        autocmd!
+        autocmd filetype markdown setlocal foldmethod=expr
+        autocmd filetype markdown setlocal foldexpr=MarkdownLevel()
+    augroup end
 endif
 " }}}
+
+" {{{
+
+function! MarkdownLevel() 
+    let h = matchstr(getline(v:lnum), '^#\+') 
+    if empty(h) 
+        return "=" 
+    else 
+        return ">" . len(h) 
+    endif 
+endfunction
+
+" }}}
+
 
 " Plugins {{{ 
 
@@ -146,7 +168,7 @@ endif
 let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
 let g:ctrlp_match_window_reversed = 1
 let g:ctrlp_clear_cache_on_exit = 0
-let g:ctrlp_extensions = ['bookmarkdir', 'buffertag', 'tag', 'quickfix', 'dir']
+let g:ctrlp_extensions = ['tag', 'bookmarkdir', 'buffertag', 'quickfix', 'dir']
 " ['tag', 'buffertag', 'quickfix', 'dir', 'rtscript', 'undo', 'line', 'changes', 'mixed', 'bookmarkdir']
 " }}}
 
@@ -192,7 +214,7 @@ let NERDTreeBookmarksFile = $HOME.'/.cache/nerdtree/.NERDTreeBookmarks'
 let NERDTreeShowBookmarks = 1
 " }}} 
 
-" PIV (php integration for vim {{{
+" PIV (php integration for vim) {{{
 let g:DisableAutoPHPFolding = 0 
 "}}} 
 
@@ -219,6 +241,7 @@ let g:syntastic_warning_symbol='⚠'
 let g:syntastic_stl_format = '[%E{Err: %fe #%e}%B{, }%W{Warn: %fw #%w}]'
 let g:syntastic_php_checkers=['php', 'phpmd', 'phpcs']
 let g:syntastic_php_phpcs_args="--report=csv --standard=Zend --error-severity=8 --warning-severity=8 "
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [], 'passive_filetypes': [] }
 
 
 
@@ -236,6 +259,15 @@ let g:tagbar_expand = 1
 let g:tagbar_foldlevel = 2
 let g:tagbar_autoshowtag = 0
 
+let g:tagbar_type_markdown = {
+	\ 'ctagstype' : 'markdown',
+	\ 'kinds' : [
+		\ 'h:Heading_L1',
+		\ 'i:Heading_L2',
+		\ 'k:Heading_L3'
+	\ ]
+\ }
+
 " }}}
 
 " Ultisnips {{{
@@ -247,5 +279,8 @@ let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 "}}}
 
+" Vimcommander {{{
+ noremap <silent> <leader>f :cal VimCommanderToggle()<CR>   
+" }}}
 
 " }}}

@@ -96,3 +96,15 @@
 [submodule "bundle/rst"]
 	path = bundle/rst
 	url = git://github.com/khorser/vim-rst-ftplugin.git
+    update = merge
+    ignore = untracked
+[submodule "bundle/pathogen"]
+	path = bundle/pathogen
+	url = git://github.com/tpope/vim-pathogen.git
+    update = merge
+    ignore = untracked
+[submodule "bundle/rst-tables"]
+	path = bundle/rst-tables
+	url = git://github.com/nvie/vim-rst-tables.git
+    update = merge
+    ignore = untracked
