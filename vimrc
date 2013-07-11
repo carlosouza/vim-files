@@ -6,7 +6,6 @@ if has('mouse')
   set mouse=a
 endif
 
-execute pathogen#infect()
 
 " Theme {{{
 
@@ -15,11 +14,11 @@ if &t_Co > 2
   set background=dark
   set paste
 elseif has("gui_running")
-  colorscheme solarized
-  set background=light
-  set guifont=Monaco
-  set guioptions+=cegmRL
+  set lines=999 columns=999
+  set guioptions+=aceMRL
 endif
+
+execute pathogen#infect()
 
 nnoremap ,bgl :set background=light<CR>
 nnoremap ,bgd :set background=dark<CR>
@@ -50,7 +49,14 @@ set pastetoggle=<F12>
 set ignorecase
 set smartcase
 
-set sessionoptions=buffers,sesdir,folds,localoptions,tabpages,winpos,winsize
+
+set backup
+set writebackup
+" set backupdir+="~/.vim/backup"
+" set directory+="~/.vim/swap"
+" set undodir+="~/.vim/undo"
+
+set sessionoptions=buffers,sesdir,folds,localoptions,tabpages,winpos,winsize,resize
 
 set omnifunc=syntaxcomplete#Complete
 " }}}
@@ -80,12 +86,14 @@ let mapleader=","
 " edit vimrc in vsplit
 nnoremap <leader>ve :vsplit $MYVIMRC<cr>
 nnoremap <leader>vs :source $MYVIMRC<cr>
+nnoremap <leader>vge :vsplit $MYGVIMRC<cr>
+nnoremap <leader>vgs :source $MYGVIMRC<cr>
 
 " quickfix and location-list mappings
-nnoremap ,qo :copen<CR>
-nnoremap ,qc :cclose<CR>
-nnoremap ,lo :lopen<CR>
-nnoremap ,lc :lclose<CR>
+nnoremap <leader>qo :copen<CR>
+nnoremap <leader>qc :cclose<CR>
+nnoremap <leader>lo :lopen<CR>
+nnoremap <leader>lc :lclose<CR>
 
 " move easily between windows
 nnoremap <silent> <M-h> :wincmd h<CR>
@@ -93,8 +101,29 @@ nnoremap <silent> <M-l> :wincmd l<CR>
 nnoremap <silent> <M-j> :wincmd j<CR>
 nnoremap <silent> <M-k> :wincmd k<CR>
 
-nnoremap <D-]> :tabnext<CR>
-nnoremap <D-[> :tabprevious<CR>
+nnoremap <silent> <M-S>h :wincmd H<CR>
+nnoremap <silent> <M-S>l :wincmd L<CR>
+nnoremap <silent> <M-S>j :wincmd J<CR>
+nnoremap <silent> <M-S>k :wincmd K<CR>
+
+nnoremap <M-]> :tabnext<CR>
+nnoremap <M-[> :tabprevious<CR>
+
+nnoremap <M-{> :tabm +<CR>
+nnoremap <M-}> :tabm -<CR>
+
+nnoremap <M-T> :tabnew<CR>
+nnoremap <M-W> :tabclose<CR>
+
+nnoremap <M-v> "*p
+inoremap <M-v> <esc>"*pi
+
+" fix syntax highlighting
+noremap <M-F9> <Esc>:syntax sync fromstart<CR>
+inoremap <M-F9> <C-o>:syntax sync fromstart<CR>
+
+nnoremap <M-s> :w<CR>
+nnoremap <M-q> :q<CR>
 
 " }}}
 
@@ -109,6 +138,10 @@ if has("autocmd")
 		autocmd!
 		autocmd FileType vim setlocal foldmethod=marker
 		autocmd BufWritePost .vimrc source $MYVIMRC
+	augroup end
+	augroup sql
+		autocmd!
+		autocmd FileType sql setlocal foldmethod=marker
 	augroup end
     augroup markdown
         autocmd!
@@ -135,7 +168,8 @@ endfunction
 " Plugins {{{ 
 
 " Ack {{{
-nnoremap <leader>a :AckFromSearch<CR>
+let g:ackprg="ack-grep -H --nocolor --nogroup --column"
+nnoremap \f :AckFromSearch <CR>
 " }}}
 
 " BufExplorer {{{
@@ -176,8 +210,10 @@ let g:ctrlp_extensions = ['tag', 'bookmarkdir', 'buffertag', 'quickfix', 'dir']
 let g:dbext_default_history_file = $HOME.'/.cache/dbext/sql_history.txt'
 let g:dbext_default_history_size = 100
 let g:dbext_default_type = 'MYSQL'
+let g:dbext_default_host = '10.10.10.10'
 let g:dbext_default_user = 'root'
 let g:dbext_default_passwd = 'secret'
+let g:dbext_default_dbname = '7c2_devel'
 let g:dbext_default_menu_mode = '2'
 " }}}
 
@@ -192,7 +228,7 @@ nnoremap <silent> <leader>gb :Gblame<CR>
 "}}}
 
 " Gundo {{{
-nnoremap <leader>gu :GundoToggle<cr>
+nnoremap \u :GundoToggle<cr>
 " let g:gundo_disable = 0
 let g:gundo_help = 1
 let g:gundo_right = 0
@@ -202,7 +238,7 @@ let g:gundo_preview_bottom = 0
 " }}}
 
 " NERDTree {{{ 
-nnoremap <leader>n :NERDTreeToggle<cr>
+nnoremap \n :NERDTreeToggle<cr>
 " let loaded_nerd_tree = 0
 let NERDTreeWinPos = "left"
 let NERDTreeWinSize = 30
@@ -224,9 +260,9 @@ let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"
 " }}}
 
 " Syntastic {{{
-nnoremap <leader>xt :SyntasticToggleMode<CR>
-nnoremap <leader>xc :SyntasticCheck<CR>
-nnoremap <leader>xe :Errors<CR>
+nnoremap \xt :SyntasticToggleMode<CR>
+nnoremap \xc :SyntasticCheck<CR>
+nnoremap \xe :Errors<CR>
 let g:syntastic_quiet_warnings=1
 let g:syntastic_check_on_open=0
 let g:syntastic_auto_jump=0
@@ -249,13 +285,13 @@ let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [], 'passive
 " }}}
 
 " Tagbar {{{
-nnoremap <silent> <leader>t :TagbarToggle<CR>
-let g:tagbar_left = 1
+nnoremap <silent> \t :TagbarToggle<CR>
+let g:tagbar_left = 0
 let g:tagbar_width = 40
-let g:tagbar_autoclose = 0
-let g:tagbar_autofocus = 0
+let g:tagbar_autoclose = 1
+let g:tagbar_autofocus = 1
 let g:tagbar_show_visibility = 1
-let g:tagbar_expand = 1
+let g:tagbar_expand = 0
 let g:tagbar_foldlevel = 2
 let g:tagbar_autoshowtag = 0
 
@@ -266,6 +302,16 @@ let g:tagbar_type_markdown = {
 		\ 'i:Heading_L2',
 		\ 'k:Heading_L3'
 	\ ]
+\ }
+
+
+let g:tagbar_type_php = {
+    \ 'kinds' : [
+        \ 'i:interfaces',
+        \ 'c:classes',
+        \ 'd:constant definitions:0:0',
+        \ 'f:functions:1:',
+    \ ],
 \ }
 
 " }}}
@@ -279,8 +325,43 @@ let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 "}}}
 
-" Vimcommander {{{
- noremap <silent> <leader>f :cal VimCommanderToggle()<CR>   
-" }}}
+
+
+"{{{ VDebug
+
+    let g:vdebug_options= {
+    \    "port" : 9000,
+    \    "server" : '10.10.10.1',
+    \    "timeout" : 20,
+    \    "continuous_mode" : 1,
+    \    "on_close" : 'detach',
+    \    "break_on_open" : 1,
+    \    "ide_key" : '',
+    \    "path_maps" : {"/var/www/erp": "/home/csouza/Develop/ERP/erp","/erp_config/erp": "/home/csouza/Develop/ERP/erp_config/erp_live", "/vagrant/erp": "/home/csouza/Develop/ERP/erp", "/vagrant/test": "/home/csouza/Develop/ERP/test"},    
+    \    "debug_window_level" : 0,
+    \    "debug_file_level" : 0,
+    \    "debug_file" : "~/.cache/vdebug.log",
+    \    "watch_window_style" : 'compact',
+    \    "marker_default" : '⬦',
+    \    "marker_closed_tree" : '▸',
+    \    "marker_open_tree" : '▾'
+    \}
+
+    let g:vdebug_keymap = {
+    \    "run" : "<F5>",
+    \    "run_to_cursor" : "<F1>",
+    \    "step_over" : "<F2>",
+    \    "step_into" : "<F3>",
+    \    "step_out" : "<F4>",
+    \    "close" : "<F6>",
+    \    "detach" : "<F7>",
+    \    "set_breakpoint" : "<F10>",
+    \    "get_context" : "<F11>",
+    \    "eval_under_cursor" : "<F12>",
+    \    "eval_visual" : "<Leader>e",
+    \}
+
+
+"}}}
 
 " }}}

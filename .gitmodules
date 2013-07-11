@@ -108,3 +108,12 @@
 	url = git://github.com/nvie/vim-rst-tables.git
     update = merge
     ignore = untracked
+[submodule "bundle/vdebug"]
+	path = bundle/vdebug
+	url = https://github.com/joonty/vdebug.git
+[submodule "bundle/plantuml"]
+	path = bundle/plantuml
+	url = https://github.com/aklt/plantuml-syntax.git
+[submodule "bundle/align"]
+	path = bundle/align
+	url = https://github.com/vim-scripts/Align.git
